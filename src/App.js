@@ -23,8 +23,25 @@ function App() {
     images: [],
     videos: [],
     body: "",
-    mediaLinks: [],
+    files: [],
   });
+  const updateLinks = (link, file) => {
+    return setState({
+      ...state,
+      files: [...state.files, link],
+      images: [...state.images, file],
+    });
+  };
+  const removeFiles = (filename) => {
+    console.log("delete");
+    var filesArray = state.files.filter((file) => file.name !== filename);
+    var imagesArray = state.images.filter((image) => image.name !== filename);
+    setState({
+      ...state,
+      files: filesArray,
+      images: imagesArray,
+    });
+  };
   console.log(state);
 
   return (
@@ -40,18 +57,18 @@ function App() {
         allowMultiple={true}
         acceptedFileTypes={["image/*"]}
         maxFiles={3}
-        server={createCloudinary("xklusivo", "kzlfjrv5")}
+        server={createCloudinary("xklusivo", "kzlfjrv5", updateLinks)}
         name="images"
         labelIdle='<p><span class="icon is-large">
                     <span class="fa-lg">
                       <i class="fas fa-camera fas fa-2x has-text-info"></i>
                     </span>                    
                   </span>Adicionar foto</p>'
-        onupdatefiles={(fileItems) => {
-          setState({
-            ...state,
-            images: fileItems.map((fileItem) => fileItem.file),
-          });
+        onremovefile={(error, file) => {
+          if (error) {
+            console.log(error);
+          }
+          removeFiles(file.filename);
         }}
       />
       <FilePond
